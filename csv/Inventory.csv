@@ -1,0 +1,21 @@
+Item_ID,Name,Quantity,Unit,Supplier_id,Price,Last_updated
+6001,Tomatoes,13,liters,5008,6.38,2025-03-14
+6002,Lettuce,56,liters,5009,16.86,2025-03-29
+6003,Cheese,48,packs,5017,5.08,2025-04-10
+6004,Chicken Breast,35,kg,5012,2.19,2025-03-18
+6005,Ground Beef,53,liters,5016,18.25,2025-03-20
+6006,Pasta,21,liters,5003,8.97,2025-03-15
+6007,Tortillas,84,liters,5002,7.54,2025-03-30
+6008,Seaweed,17,units,5001,7.35,2025-03-29
+6009,Rice,87,liters,5016,11.27,2025-03-31
+6010,Bell Peppers,89,liters,5020,19.2,2025-04-06
+6011,Onions,86,packs,5007,7.85,2025-03-24
+6012,Garlic,83,kg,5017,7.51,2025-03-29
+6013,Milk,84,kg,5019,17.55,2025-04-01
+6014,Butter,48,liters,5003,14.24,2025-03-20
+6015,Bread,53,kg,5017,3.67,2025-03-25
+6016,Salmon,97,liters,5007,12.36,2025-03-26
+6017,Shrimp,18,liters,5019,2.85,2025-04-01
+6018,Beef Ribs,88,packs,5013,10.75,2025-04-10
+6019,Potatoes,88,kg,5012,19.26,2025-03-15
+6020,Spices,45,liters,5013,8.3,2025-03-19
