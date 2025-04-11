@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Restaurant Website</title>
+
+    
+
+    <!-- Bootstrap CSS Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="../static/index.css" rel="stylesheet">
+    <script src="../static/staff.js"></script>
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+  </head>
+
+
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="mb-auto">
+        <div>
+          <h3 class="float-md-start mb-0">Awesome Restaurant</h3>
+          <nav class="nav nav-masthead justify-content-center float-md-end">
+            <a class="nav-link" href="./customer.html">Customers</a>
+            <a class="nav-link active" aria-current="page" href="./staff.html">Staff</a>
+            <a class="nav-link" href="./admin.html">Administrator</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="px-3">
+        <!-- Order Status Updating -->
+        <div id="order-update", style="display: block; opacity: 1;">
+          <h1>Update the Status of an Order</h1>
+          <p class="lead">Want to update the meal inventory? <a href="#", id="to-meal-update">Update meal inventory.</a></p><br>
+          
+          <p class="lead">Enter the Order ID of the order whose status youd like to update, then select the status to update to.</p>
+          <p class="lead">
+            <form action="/updateorder.php" method="post">
+              <div class="row mb-3">
+                <label for="orderid" class="col-4 col-form-label">Order ID</label>
+                <div class="col-8">
+                    <input type="text", placeholder="Please enter the Order ID" class="form-control col-4" id="orderid">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="status" class="col-4 col-form-label">New Status</label>
+                <div class="col-8">
+                    <select class="form-select col-4" name="status" id="status">
+                        <option value="1">Pending</option>
+                        <option value="2">Cancelled</option>
+                        <option value="3">Completed</option>
+                      </select>
+                </div>
+              </div>
+              <div class="form-check">
+                <button type="submit" class="btn btn-primary">Update Order Status</button>
+              </div>
+            </form>
+          </p>
+        </div>
+
+        <!-- Meal Inventory Updating -->
+        <div id="meal-update", style="display: none; opacity: 0">
+          <h1>Update Meal Inventory</h1>
+          <p class="lead">Want to update the status of an order? <a href="#", id="to-order-update">Update order status.</a></p><br>
+          
+          <p class="lead">Input the Meal ID of the meal you'd like to update, then list the new quantity.</p>
+          <p class="lead">
+            <form action="/updatemeal.php" method="get">
+              <div class="row mb-3" id="meal-list">
+                <div class="row mb-3">
+                    <label for="mealid" class="col-4 col-form-label">Meal ID</label>
+                    <div class="col-8">
+                        <input type="text", placeholder="Meal ID", class="form-control col-3" id="mealid">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="quantity" class="col-4 col-form-label">New Quantity</label>
+                    <div class="col-8">
+                        <input type="number", placeholder="Quantity", class="form-control col-4" id="quantity" min="0" max="1000">
+                    </div>
+                </div>
+              </div>
+              <div class="form-check">
+              <button type="submit" class="btn btn-primary">Update Meal Inventory</button>
+            </form>
+          </p>
+        </div>
+      </main>
+
+      <footer class="mt-auto text-white-50">
+        <p>We hope you enjoy our food!</p>
+      </footer>
+    </div>
+
+
+    
+  </body>
+</html>
