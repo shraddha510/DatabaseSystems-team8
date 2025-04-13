@@ -33,7 +33,7 @@ CREATE TABLE DiningTable (
 -- ORDERS TABLE
 CREATE TABLE Orders (
     Order_ID INT PRIMARY KEY AUTO_INCREMENT,
-    OrderType ENUM('Togo', 'Dine-in') NOT NULL,
+    OrderType ENUM('Togo', 'DineIn') NOT NULL,
     Server INT,
     OrderStatus VARCHAR(20) NOT NULL DEFAULT 'Pending',
     TotalPrice DECIMAL(10,2) NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE MealDetail (
 
 -- TRANSACTION TABLE
 CREATE TABLE TransactionInfo (
-    TransactionNum INT PRIMARY KEY AUTO_INCREMENT,
+    TransactionNum INT NOT NULL,
     Order_ID INT NOT NULL,
     Tax DECIMAL(10,2) NOT NULL,
     Tips DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -108,6 +108,7 @@ CREATE TABLE TransactionInfo (
     PaymentMethod VARCHAR(50) NOT NULL,
     PaymentStatus VARCHAR(20) NOT NULL DEFAULT 'Pending',
     TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (TransactionNum, Order_ID),
     FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID) ON DELETE RESTRICT
 );
 
