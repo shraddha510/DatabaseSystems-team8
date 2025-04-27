@@ -1,10 +1,9 @@
 <?php
-// db.php — shared connection to MySQL
 
 $host = 'localhost';
 $db   = 'restaurantDB';
 $user = 'root';
-$pass = 'team8db';
+$pass = '';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
