@@ -1,55 +1,49 @@
 <?php
 require_once 'db.php';
 
-if (isset($_POST['updateMealID'], $_POST['updateMealName'], $_POST['updateDescription'], $_POST['updatePrice'])) {
-    $mealID = $_POST['updateMealID'];
-    $mealName = $_POST['updateMealName'];
-    $description = $_POST['updateDescription'];
-    $price = $_POST['updatePrice'];
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mealID = $_POST['mealid'] ?? null;
+    $quantity = $_POST['quantity'] ?? null;
+
+    if (!$mealID || !$quantity) {
+        echo json_encode(['error' => 'Missing meal ID or quantity.']);
+        exit;
+    }
 
     try {
-        // Step 1: Fetch the old values before updating
-        $fetchSql = "SELECT * FROM Meal WHERE Meal_ID = :mealID";
-        $fetchStmt = $pdo->prepare($fetchSql);
-        $fetchStmt->bindParam(':mealID', $mealID, PDO::PARAM_INT);
-        $fetchStmt->execute();
-        $oldMeal = $fetchStmt->fetch(PDO::FETCH_ASSOC);
+        // First get the current meal information
+        $getMealStmt = $pdo->prepare("SELECT * FROM Meal WHERE Meal_ID = ?");
+        $getMealStmt->execute([$mealID]);
+        $meal = $getMealStmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$oldMeal) {
-            echo "Error: Meal with ID " . htmlspecialchars($mealID) . " not found.";
+        if (!$meal) {
+            echo json_encode(['error' => "No meal found with ID #{$mealID}."]);
             exit;
         }
 
-        // Step 2: Update the meal
-        $updateSql = "UPDATE Meal 
-                      SET Name = :name, Description = :description, Price = :price 
-                      WHERE Meal_ID = :mealID";
-        $updateStmt = $pdo->prepare($updateSql);
-        $updateStmt->bindParam(':name', $mealName);
-        $updateStmt->bindParam(':description', $description);
-        $updateStmt->bindParam(':price', $price);
-        $updateStmt->bindParam(':mealID', $mealID, PDO::PARAM_INT);
+        // Update the meal quantity 
+        $updateStmt = $pdo->prepare("UPDATE Meal SET Quantity = ? WHERE Meal_ID = ?");
+        $updateStmt->execute([$quantity, $mealID]);
 
-        if ($updateStmt->execute()) {
-            echo "<h3>Meal Updated Successfully!</h3><br>";
-            echo "<strong>Before Update:</strong><br>";
-            echo "Meal ID: " . htmlspecialchars($oldMeal['Meal_ID']) . "<br>";
-            echo "Name: " . htmlspecialchars($oldMeal['Name']) . "<br>";
-            echo "Description: " . htmlspecialchars($oldMeal['Description']) . "<br>";
-            echo "Price: $" . htmlspecialchars($oldMeal['Price']) . "<br><br>";
-            echo "<strong>After Update:</strong><br>";
-            echo "Meal ID: " . htmlspecialchars($mealID) . "<br>";
-            echo "Name: " . htmlspecialchars($mealName) . "<br>";
-            echo "Description: " . htmlspecialchars($description) . "<br>";
-            echo "Price: $" . htmlspecialchars($price) . "<br>";
+        if ($updateStmt->rowCount() > 0) {
+            echo json_encode([
+                'success' => true,
+                'message' => "Meal #{$mealID} quantity updated to {$quantity}.",
+                'meal' => $meal
+            ]);
         } else {
-            echo "Failed to update meal.";
+            echo json_encode([
+                'success' => false,
+                'message' => "Meal #{$mealID} quantity was already set to {$quantity}.",
+                'meal' => $meal
+            ]);
         }
-
     } catch (PDOException $e) {
-        echo "Error updating meal: " . $e->getMessage();
+        echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
     }
 } else {
-    echo "Missing required form data.";
+    echo json_encode(['error' => 'Invalid request method.']);
 }
 ?>

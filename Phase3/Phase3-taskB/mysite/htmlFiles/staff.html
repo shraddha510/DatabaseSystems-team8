@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Restaurant Website</title>
 
-
-
   <!-- Bootstrap CSS Stylesheets -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
@@ -50,10 +48,8 @@
       <!-- Order Status Updating -->
       <div id="order-update" style="display: block; opacity: 1;">
         <h1>Update the Status of an Order</h1>
-        <p class="lead">Want to update the meal inventory? <a href="#" id="to-meal-update">Update meal inventory.</a>
-        </p><br>
 
-        <p class="lead">Enter the Order ID of the order whose status youd like to update, then select the status to
+        <p class="lead">Enter the Order ID of the order whose status you'd like to update, then select the status to
           update to.</p>
         <p class="lead">
         <form action="../php/updateorder.php" method="post">
@@ -72,41 +68,11 @@
                 <option value="Cancelled">Cancelled</option>
                 <option value="Completed">Completed</option>
               </select>
-
             </div>
           </div>
           <div class="form-check">
             <button type="submit" class="btn btn-primary">Update Order Status</button>
           </div>
-        </form>
-        </p>
-      </div>
-
-      <!-- Meal Inventory Updating -->
-      <div id="meal-update" style="display: none; opacity: 0">
-        <h1>Update Meal Inventory</h1>
-        <p class="lead">Want to update the status of an order? <a href="#" id="to-order-update">Update order
-            status.</a></p><br>
-
-        <p class="lead">Input the Meal ID of the meal you'd like to update, then list the new quantity.</p>
-        <p class="lead">
-        <form action="../php/updatemeal.php" method="get">
-          <div class="row mb-3" id="meal-list">
-            <div class="row mb-3">
-              <label for="mealid" class="col-4 col-form-label">Meal ID</label>
-              <div class="col-8">
-                <input type="text" placeholder="Meal ID" class="form-control col-3" id="mealid">
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label for="quantity" class="col-4 col-form-label">New Quantity</label>
-              <div class="col-8">
-                <input type="number" placeholder="Quantity" class="form-control col-4" id="quantity" min="0" max="1000">
-              </div>
-            </div>
-          </div>
-          <div class="form-check">
-            <button type="submit" class="btn btn-primary">Update Meal Inventory</button>
         </form>
         </p>
       </div>
@@ -116,8 +82,6 @@
       <p>We hope you enjoy our food!</p>
     </footer>
   </div>
-
-
 
 </body>
 
