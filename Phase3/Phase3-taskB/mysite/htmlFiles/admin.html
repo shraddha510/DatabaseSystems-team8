@@ -26,11 +26,11 @@
       <!-- Transaction Management Section -->
       <div id="transaction-management">
         <h2>Transaction Management</h2>
-        <form action="../php/getAllTransactions.php" method="get" class="form-button" id="viewAllTransactionsForm">
+        <form class="form-button" id="viewAllTransactionsForm">
           <button type="submit" class="view-all-button">View All Transaction Records</button>
         </form>
 
-        <form action="../php/getTransaction.php" method="get" id="viewTransactionForm">
+        <form id="viewTransactionForm">
           <h3>View Transaction Record</h3>
           <div class="form-row">
             <label for="orderID">Order ID:</label>
@@ -47,12 +47,12 @@
       <!-- Meal Management Section -->
       <div id="meal-management">
         <h2>Meal Management</h2>
-        <form action="../php/getAllMeals.php" method="get" class="form-button" id="viewAllMealsForm">
+        <form class="form-button" id="viewAllMealsForm">
           <button type="submit" class="view-all-button">View All Meals</button>
         </form>
 
         <!-- Update Existing Meal Item -->
-        <form action="../php/updatemeal.php" method="post" id="updateMealForm">
+        <form id="updateMealForm">
           <h3>Update Meal</h3>
           <div class="form-row">
             <label for="updateMealID">Meal ID:</label>
@@ -74,7 +74,7 @@
         </form>
 
         <!-- Add New Meal -->
-        <form action="../php/addMeal.php" method="post" id="addMealForm">
+        <form id="addMealForm">
           <h3>Add New Meal</h3>
           <div class="form-row">
             <label for="newMealID">Meal ID:</label>
@@ -96,7 +96,7 @@
         </form>
 
         <!-- Remove Meal -->
-        <form action="../php/removeMeal.php" method="post" id="removeMealForm">
+        <form id="removeMealForm">
           <h3>Remove Meal</h3>
           <div class="form-row">
             <label for="removeMealID">Meal ID:</label>
