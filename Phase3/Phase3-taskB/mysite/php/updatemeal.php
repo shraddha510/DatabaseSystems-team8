@@ -4,16 +4,19 @@ require_once 'db.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $mealID = $_POST['mealid'] ?? null;
-    $quantity = $_POST['quantity'] ?? null;
+    $mealID = $_POST['updateMealID'] ?? null;
+    $mealName = $_POST['updateMealName'] ?? null;
+    $description = $_POST['updateDescription'] ?? null;
+    $price = $_POST['updatePrice'] ?? null;
 
-    if (!$mealID || !$quantity) {
-        echo json_encode(['error' => 'Missing meal ID or quantity.']);
+    // Check if all fields are provided
+    if (!$mealID || !$mealName || !$description || !$price) {
+        echo json_encode(['error' => 'Missing one or more required fields.']);
         exit;
     }
 
     try {
-        // First get the current meal information
+        // First, check if the meal exists
         $getMealStmt = $pdo->prepare("SELECT * FROM Meal WHERE Meal_ID = ?");
         $getMealStmt->execute([$mealID]);
         $meal = $getMealStmt->fetch(PDO::FETCH_ASSOC);
@@ -23,21 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Update the meal quantity 
-        $updateStmt = $pdo->prepare("UPDATE Meal SET Quantity = ? WHERE Meal_ID = ?");
-        $updateStmt->execute([$quantity, $mealID]);
+        // Update the meal information
+        $updateStmt = $pdo->prepare("
+            UPDATE Meal 
+            SET Name = ?, Description = ?, Price = ?
+            WHERE Meal_ID = ?
+        ");
+        $updateStmt->execute([$mealName, $description, $price, $mealID]);
 
         if ($updateStmt->rowCount() > 0) {
             echo json_encode([
                 'success' => true,
-                'message' => "Meal #{$mealID} quantity updated to {$quantity}.",
-                'meal' => $meal
+                'message' => "Meal #{$mealID} updated successfully.",
             ]);
         } else {
             echo json_encode([
                 'success' => false,
-                'message' => "Meal #{$mealID} quantity was already set to {$quantity}.",
-                'meal' => $meal
+                'message' => "No changes made to Meal #{$mealID}.",
             ]);
         }
     } catch (PDOException $e) {

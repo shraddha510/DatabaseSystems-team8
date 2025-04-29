@@ -1,11 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Load meals from the database
-    fetch('/restaurant/php/getMeals.php')
+﻿document.addEventListener('DOMContentLoaded', () => {
+    const cart = [];
+
+    // Load meals into the dropdown
+    fetch('../php/getMeals.php')
         .then(response => response.json())
         .then(meals => {
             const mealSelect = document.getElementById('mealid');
-            mealSelect.innerHTML = ''; // Clear existing options
-
+            mealSelect.innerHTML = '';
             meals.forEach(meal => {
                 const option = document.createElement('option');
                 option.value = meal.Meal_ID;
@@ -15,103 +16,120 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error loading meals:', error);
-            const mealSelect = document.getElementById('mealid');
-            const option = document.createElement('option');
-            option.value = "";
-            option.textContent = "Error loading meals";
-            mealSelect.innerHTML = '';
-            mealSelect.appendChild(option);
+            document.getElementById('mealid').innerHTML = '<option value="">Error loading meals</option>';
         });
 
-    // Navigation between Place Order and Track Order sections
-    document.querySelector('#to-track').addEventListener('click', () => {
-        document.querySelector('#place').style.animation = 'fadeOut 1s 0s ease-in-out 1 forwards running';
+    // Add meal to cart
+    document.getElementById('placeOrderForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const mealId = document.getElementById('mealid').value;
+        const mealText = document.getElementById('mealid').selectedOptions[0].textContent;
+        const quantity = document.getElementById('quantity').value;
+
+        if (!mealId || quantity <= 0) {
+            alert('Please select a valid meal and quantity.');
+            return;
+        }
+
+        cart.push({ mealId, mealText, quantity });
+        renderCart();
     });
 
-    document.querySelector('#place').addEventListener('animationend', (event) => {
-        if (event['animationName'] === 'fadeOut') {
-            document.querySelector('#place').style.display = 'none';
-            document.querySelector('#track').style.display = 'block';
-            document.querySelector('#track').style.animation = 'fadeIn 1s 0s ease-in-out 1 forwards running';
+    function renderCart() {
+        const tbody = document.querySelector('#cartTable tbody');
+        tbody.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.mealText}</td>
+                <td>${item.quantity}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="removeFromCart(${index})">Remove</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Enable Place Order button only if there are items
+        document.getElementById('placeFullOrderBtn').disabled = cart.length === 0;
+    }
+
+    window.removeFromCart = function (index) {
+        cart.splice(index, 1);
+        renderCart();
+    };
+
+    // Place the full order
+    document.getElementById('placeFullOrderBtn').addEventListener('click', async function () {
+        if (cart.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+
+        const orderType = document.getElementById('orderTypeFinal').value;
+        const formData = new FormData();
+        formData.append('orderType', orderType);
+        formData.append('cart', JSON.stringify(cart));
+
+        try {
+            const response = await fetch('../php/neworder.php', {
+                method: 'POST',
+                body: formData
+            });
+            const resultHtml = await response.text();
+            document.getElementById('placeOrderResult').innerHTML = resultHtml;
+
+            cart.length = 0;
+            renderCart();
+        } catch (error) {
+            console.error('Error placing order:', error);
+            document.getElementById('placeOrderResult').innerHTML = '<div class="alert alert-danger">Error placing order.</div>';
         }
     });
 
-    document.querySelector('#to-order').addEventListener('click', () => {
-        document.querySelector('#track').style.animation = 'fadeOut 1s 0s ease-in-out 1 forwards running';
-    });
+    // Track Order
+    document.getElementById('trackOrderForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const orderid = document.getElementById('orderid').value;
+        const resultDiv = document.getElementById('trackOrderResult');
 
-    document.querySelector('#track').addEventListener('animationend', (event) => {
-        if (event['animationName'] === 'fadeOut') {
-            document.querySelector('#track').style.display = 'none';
-            document.querySelector('#place').style.display = 'block';
-            document.querySelector('#place').style.animation = 'fadeIn 1s 0s ease-in-out 1 forwards running';
+        if (!orderid.trim()) {
+            resultDiv.innerHTML = '<div class="alert alert-warning">Please enter a valid Order ID.</div>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`../php/trackorder.php?orderid=${encodeURIComponent(orderid)}`);
+            const resultHtml = await response.text();
+            resultDiv.innerHTML = resultHtml;
+        } catch (error) {
+            console.error('Error tracking order:', error);
+            resultDiv.innerHTML = '<div class="alert alert-danger">Error tracking order.</div>';
         }
     });
 
-    // Submit order form handling
-    document.querySelector('form[action="/neworder.php"]').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const formData = new FormData(this);
-        // Add quantity from the quantity input
-        formData.append('quantity', document.getElementById('quantity').value);
-
-        fetch('/restaurant/php/neworder.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.text())
-            .then(data => {
-                // Display the response from neworder.php
-                const resultDiv = document.createElement('div');
-                resultDiv.innerHTML = data;
-                resultDiv.className = 'order-confirmation';
-
-                // Replace the form with the result
-                this.replaceWith(resultDiv);
-
-                // Add a button to place another order
-                const newOrderBtn = document.createElement('button');
-                newOrderBtn.textContent = 'Place Another Order';
-                newOrderBtn.className = 'btn btn-primary mt-3';
-                newOrderBtn.addEventListener('click', () => {
-                    location.reload();
-                });
-                resultDiv.appendChild(document.createElement('br'));
-                resultDiv.appendChild(newOrderBtn);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while placing your order. Please try again.');
-            });
+    // Page animation for switching between place/track
+    document.getElementById('to-track').addEventListener('click', () => {
+        document.getElementById('place').style.animation = 'fadeOut 1s forwards';
     });
 
-    // Track order form handling
-    document.querySelector('form[action="/trackorder.php"]').addEventListener('submit', function (event) {
-        event.preventDefault();
+    document.getElementById('place').addEventListener('animationend', (event) => {
+        if (event.animationName === 'fadeOut') {
+            document.getElementById('place').style.display = 'none';
+            document.getElementById('track').style.display = 'block';
+            document.getElementById('track').style.animation = 'fadeIn 1s forwards';
+        }
+    });
 
-        const orderID = document.getElementById('orderid').value;
+    document.getElementById('to-order').addEventListener('click', () => {
+        document.getElementById('track').style.animation = 'fadeOut 1s forwards';
+    });
 
-        fetch(`/restaurant/php/trackorder.php?orderid=${orderID}`)
-            .then(response => response.text())
-            .then(data => {
-                // Display the tracking result
-                const resultDiv = document.createElement('div');
-                resultDiv.innerHTML = data;
-                resultDiv.className = 'tracking-result';
-
-                // Clear any previous results
-                const previousResults = document.querySelector('.tracking-result');
-                if (previousResults) {
-                    previousResults.remove();
-                }
-
-                // Add the new results after the form
-                this.parentNode.appendChild(resultDiv);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while tracking your order. Please try again.');
-            });
+    document.getElementById('track').addEventListener('animationend', (event) => {
+        if (event.animationName === 'fadeOut') {
+            document.getElementById('track').style.display = 'none';
+            document.getElementById('place').style.display = 'block';
+            document.getElementById('place').style.animation = 'fadeIn 1s forwards';
+        }
     });
 });
